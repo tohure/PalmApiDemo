@@ -1,4 +1,4 @@
-# PalmApiDemo
+# PaLM API Demo
 
 Ejemplo de cómo usar Palm API en Android con Kotlin
 
@@ -13,7 +13,7 @@ https://developers.generativeai.google/tutorials/setup).
 
 
 ## 2. Guarda la llave en Properties
-Dentro de tu proyecto Android, ubica tu archivo local.properties y escribe un nuevo valor llamado __palm_key__. El archivo debería quedarte similar de la siguiente forma:
+Dentro de tu proyecto Android, ubica tu archivo **local.properties** y escribe un nuevo valor llamado __palm_key__. El archivo debería quedarte similar de la siguiente forma:
 
 ``` groovy
 sdk.dir=/Users/YOUR_NAME/Library/Android/sdk
@@ -22,6 +22,7 @@ palm_key="YOUR_PALM_API_KEY"
 
 ## 3. Compila y cruza dedos
 Si todo lo anterior salió bien. Tu aplicación debe haber compilado correctamente y mostrar una pantalla similar a esta:
+
 ![baseApp](./screenshots/first_load.png)
 
 
