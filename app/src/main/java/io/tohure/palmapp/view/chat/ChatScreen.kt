@@ -1,8 +1,10 @@
-package io.tohure.palmapp
+package io.tohure.palmapp.view.chat
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -18,14 +20,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.ai.generativelanguage.v1beta3.Message
 import io.tohure.palmapp.ui.theme.PalmAppTheme
 
 @Composable
-fun TextScreen(
-    viewModel: MainViewModel = viewModel()
+fun ChatScreen(
+    mainViewModel: ChatViewModel = viewModel()
 ) {
     val (inputText, setInputText) = remember { mutableStateOf("") }
-    val textOutput: String by viewModel.output.collectAsState()
+    val messages: List<Message> by mainViewModel.messages.collectAsState()
     Column(
         modifier = Modifier.padding(all = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -38,25 +41,33 @@ fun TextScreen(
         )
         Button(
             onClick = {
-                viewModel.sendPrompt(inputText)
+                mainViewModel.sendMessage(inputText)
             },
             modifier = Modifier.padding(8.dp)
         ) {
-            Text("Generate Text")
+            Text("Send Message")
         }
-        Card(
-            modifier = Modifier
-                .padding(vertical = 2.dp)
-                .fillMaxWidth()
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth(),
+            reverseLayout = true
         ) {
-            Column(
-                modifier = Modifier.padding(8.dp)
-            ) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = textOutput,
-                    style = MaterialTheme.typography.bodyMedium
-                )
+            items(messages) { message ->
+                Card(modifier = Modifier.padding(vertical = 2.dp)) {
+                    Column(
+                        modifier = Modifier.padding(8.dp)
+                    ) {
+                        Text(
+                            text = if (message.author == "1") "PaLM" else message.author,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = message.content,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
             }
         }
     }
@@ -64,8 +75,8 @@ fun TextScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun TextUiPreview() {
+fun ChatUiPreview() {
     PalmAppTheme {
-        TextScreen()
+        ChatScreen()
     }
 }

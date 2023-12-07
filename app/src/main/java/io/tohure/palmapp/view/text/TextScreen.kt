@@ -1,4 +1,4 @@
-package io.tohure.palmapp
+package io.tohure.palmapp.view.text
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,8 +21,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.tohure.palmapp.ui.theme.PalmAppTheme
 
 @Composable
-fun ChatScreen(
-    viewModel: MainViewModel = viewModel()
+fun TextScreen(
+    viewModel: TextViewModel = viewModel()
 ) {
     val (inputText, setInputText) = remember { mutableStateOf("") }
     val textOutput: String by viewModel.output.collectAsState()
@@ -64,8 +64,8 @@ fun ChatScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun ChatUiPreview() {
+fun TextUiPreview() {
     PalmAppTheme {
-        ChatScreen()
+        TextScreen()
     }
 }

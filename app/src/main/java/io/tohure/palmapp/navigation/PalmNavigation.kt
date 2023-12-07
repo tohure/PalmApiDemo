@@ -4,9 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import io.tohure.palmapp.ChatScreen
+import io.tohure.palmapp.view.chat.ChatScreen
 import io.tohure.palmapp.MainScreen
-import io.tohure.palmapp.TextScreen
+import io.tohure.palmapp.view.text.TextScreen
 
 @Composable
 fun PalmNavigation() {

@@ -40,20 +40,25 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
+
     buildFeatures {
         compose = true
         buildConfig = true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -67,6 +72,7 @@ dependencies {
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
     implementation("androidx.activity:activity-compose:1.8.1")
     implementation("androidx.navigation:navigation-compose:2.7.5")
     implementation(platform("androidx.compose:compose-bom:2023.10.01"))
@@ -78,7 +84,6 @@ dependencies {
     // add these dependencies to use Generative AI
     implementation("com.google.cloud:gapic-google-cloud-ai-generativelanguage-v1beta3-java:0.0.0-SNAPSHOT")
     implementation("io.grpc:grpc-okhttp:1.60.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

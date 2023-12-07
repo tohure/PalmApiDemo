@@ -1,4 +1,4 @@
-package io.tohure.palmapp
+package io.tohure.palmapp.view.text
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,13 +11,14 @@ import com.google.ai.generativelanguage.v1beta3.TextServiceSettings
 import com.google.api.gax.core.FixedCredentialsProvider
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider
 import com.google.api.gax.rpc.FixedHeaderProvider
+import io.tohure.palmapp.BuildConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class MainViewModel : ViewModel() {
+class TextViewModel : ViewModel() {
 
     private val _output = MutableStateFlow(value = "")
     val output: StateFlow<String>
@@ -27,11 +28,9 @@ class MainViewModel : ViewModel() {
 
     init {
         // Initialize the Text Service Client
-        client = initializeTextServiceClient(
-            apiKey = BuildConfig.palmKey
-        )
+        client = initializeTextServiceClient()
 
-        sendPrompt("Any bilingual language model for PaLM?.")
+        sendPrompt("Do you know GDG Cloud Lima in Peru?")
     }
 
     fun sendPrompt(query: String) {
@@ -42,7 +41,6 @@ class MainViewModel : ViewModel() {
         val request = createTextRequest(prompt)
         generateText(request)
     }
-
 
     private fun generateText(
         request: GenerateTextRequest
@@ -60,21 +58,16 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    private fun initializeTextServiceClient(
-        apiKey: String
-    ): TextServiceClient {
-        // (This is a workaround because GAPIC java libraries don't yet support API key auth)
-        val transportChannelProvider = InstantiatingGrpcChannelProvider.newBuilder()
-            .setHeaderProvider(
-                FixedHeaderProvider.create(
-                    hashMapOf("x-goog-api-key" to apiKey)
-                )
-            )
+    // (This is a workaround because GAPIC java libraries don't yet support API key auth)
+    private fun startTransportChannelProvider() =
+        InstantiatingGrpcChannelProvider.newBuilder()
+            .setHeaderProvider(FixedHeaderProvider.create(hashMapOf("x-goog-api-key" to BuildConfig.palmKey)))
             .build()
 
+    private fun initializeTextServiceClient(): TextServiceClient {
         // Create TextServiceSettings
         val settings = TextServiceSettings.newBuilder()
-            .setTransportChannelProvider(transportChannelProvider)
+            .setTransportChannelProvider(startTransportChannelProvider())
             .setCredentialsProvider(FixedCredentialsProvider.create(null))
             .build()
 
@@ -82,27 +75,33 @@ class MainViewModel : ViewModel() {
         return TextServiceClient.create(settings)
     }
 
-    private fun createPrompt(
-        textContent: String
-    ) = TextPrompt.newBuilder()
-        .setText(textContent)
-        .build()
+    private fun createPrompt(textContent: String) =
+        TextPrompt.newBuilder()
+            .setText(textContent)
+            .build()
 
-    private fun createTextRequest(prompt: TextPrompt) = GenerateTextRequest.newBuilder()
-        .setModel("models/text-bison-001") // Required, which model to use to generate the result
-        .setPrompt(prompt) // Required
-        .setTemperature(0.5f) // Optional, controls the randomness of the output
-        .setCandidateCount(1) // Optional, the number of generated texts to return
-        .setTopK(43)
-        .setTopP(1F)
-        .addSafetySettings(SafetySetting.newBuilder()
-            .setCategory(HarmCategory.HARM_CATEGORY_DEROGATORY)
-            .setThreshold(SafetySetting.HarmBlockThreshold.BLOCK_NONE))
-        .addSafetySettings(SafetySetting.newBuilder()
-            .setCategory(HarmCategory.HARM_CATEGORY_TOXICITY)
-            .setThreshold(SafetySetting.HarmBlockThreshold.BLOCK_NONE))
-        .addSafetySettings(SafetySetting.newBuilder()
-            .setCategory(HarmCategory.HARM_CATEGORY_MEDICAL)
-            .setThreshold(SafetySetting.HarmBlockThreshold.BLOCK_NONE))
-        .build()
+    private fun createTextRequest(prompt: TextPrompt) =
+        GenerateTextRequest.newBuilder()
+            .setModel("models/text-bison-001") // Required, which model to use to generate the result
+            .setPrompt(prompt) // Required
+            .setTemperature(0.5f) // Optional, controls the randomness of the output
+            .setCandidateCount(1) // Optional, the number of generated texts to return
+            .setTopK(43)
+            .setTopP(1F)
+            .addSafetySettings(
+                SafetySetting.newBuilder()
+                    .setCategory(HarmCategory.HARM_CATEGORY_DEROGATORY)
+                    .setThreshold(SafetySetting.HarmBlockThreshold.BLOCK_NONE)
+            )
+            .addSafetySettings(
+                SafetySetting.newBuilder()
+                    .setCategory(HarmCategory.HARM_CATEGORY_TOXICITY)
+                    .setThreshold(SafetySetting.HarmBlockThreshold.BLOCK_NONE)
+            )
+            .addSafetySettings(
+                SafetySetting.newBuilder()
+                    .setCategory(HarmCategory.HARM_CATEGORY_MEDICAL)
+                    .setThreshold(SafetySetting.HarmBlockThreshold.BLOCK_NONE)
+            )
+            .build()
 }
